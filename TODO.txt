@@ -1,0 +1,12 @@
+Game Engine TODO:
+
+- Streamline LoadMedia Functions for various gamestates
+	* Centralized Class for sound/Texture files?
+	* Load assets on an entity basis?
+- Streamline "updateText" functions
+	* Is Stringstream necessary? Are there alternatives?
+- Implement levels as sub-loops
+	* Need to define loop structure
+- Add pause/menu to GameLoop
+- Improve font handling
+	*gFont may not be deallocating properly
