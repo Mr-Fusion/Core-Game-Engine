@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <stdlib.h>
+#include "GameEntity.h"
 #include "Const.h"
 #include "LTimer.h"
 #include "LTexture.h"
@@ -16,21 +17,21 @@
 #define BULLET_WIDTH        2
 #define BULLET_VELOCITY     -10
 
-class Player
+class Player : public GameEntity
 {
     public:
 
-    	SDL_Rect shipDim, bulDim;
+    	SDL_Rect dim, bulDim;
 
         SDL_Point bulVel;
 
     ///Constructor Function
     Player(){
 
-    	shipDim.h = SHIP_HEIGHT;
-    	shipDim.w = SHIP_WIDTH;
-    	shipDim.x = SCREEN_WIDTH/2 - SHIP_WIDTH/2;
-    	shipDim.y = SCREEN_HEIGHT - SHIP_HEIGHT * 2;
+    	dim.h = SHIP_HEIGHT;
+    	dim.w = SHIP_WIDTH;
+    	dim.x = SCREEN_WIDTH/2 - SHIP_WIDTH/2;
+    	dim.y = SCREEN_HEIGHT - SHIP_HEIGHT * 2;
 
         bulDim.h = BULLET_HEIGHT;
         bulDim.w = BULLET_WIDTH;
@@ -49,62 +50,36 @@ class Player
 
     }
 
-    bool checkCollision( SDL_Rect foreignObj){
-        if (shipDim.y > ( foreignObj.y + foreignObj.h ) )
-            return false;
-
-        if (shipDim.y + shipDim.h < foreignObj.y)
-            return false;
-                
-        if (shipDim.x + shipDim.w < foreignObj.x)
-            return false;
-                    
-        if (shipDim.x > foreignObj.x + foreignObj.w)
-            return false;
-
-        return true;
-
-    }
-
     Bullet* shoot() {
-        bulDim.x = shipDim.x + shipDim.w/2;
-        bulDim.y = shipDim.y;
+        bulDim.x = dim.x + dim.w/2;
+        bulDim.y = dim.y;
         return new Bullet(bulDim,bulVel);
         //play sound effect?
         //graphical effects?
     }
 
-    SDL_Rect getDim() {
-        return shipDim;
-    }
-
     void moveLeft(){
-    	shipDim.x -= SHIP_VELOCITY;
-    	if (shipDim.x < 0)
-    		shipDim.x = 0;
+    	dim.x -= SHIP_VELOCITY;
+    	if (dim.x < 0)
+    		dim.x = 0;
     }
 
     void moveRight() {
-        shipDim.x += SHIP_VELOCITY;
-        if (shipDim.x > SCREEN_WIDTH - shipDim.w)
-            shipDim.x = SCREEN_WIDTH - shipDim.w;
+        dim.x += SHIP_VELOCITY;
+        if (dim.x > SCREEN_WIDTH - dim.w)
+            dim.x = SCREEN_WIDTH - dim.w;
     }
 
     void moveUp(){
-        shipDim.y -= SHIP_VELOCITY;
-        if (shipDim.y < 0)
-            shipDim.y = 0;
+        dim.y -= SHIP_VELOCITY;
+        if (dim.y < 0)
+            dim.y = 0;
     }
 
     void moveDown() {
-        shipDim.y += SHIP_VELOCITY;
-        if (shipDim.y > SCREEN_HEIGHT - shipDim.h)
-            shipDim.y = SCREEN_HEIGHT - shipDim.h;
-    }
-
-    void render(){
-
-    	SDL_RenderFillRect(gRenderer, &shipDim);
+        dim.y += SHIP_VELOCITY;
+        if (dim.y > SCREEN_HEIGHT - dim.h)
+            dim.y = SCREEN_HEIGHT - dim.h;
     }
 
 };

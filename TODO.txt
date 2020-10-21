@@ -10,3 +10,8 @@ Game Engine TODO:
 - Add pause/menu to GameLoop
 - Improve font handling
 	*gFont may not be deallocating properly
+	
+	Test1
+	Test2
+	Test3
+	Test4
