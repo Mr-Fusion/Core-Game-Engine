@@ -38,12 +38,6 @@ class GameLoop : public GameState
     // Sprite color
     int spR, spG, spB;
 
-    // In memory text stream
-    std::stringstream msgText;
-    std::stringstream lvlText;
-    std::stringstream livesText;
-    std::stringstream scoreText;
-
     // Scene textures
     LTexture livesTextTexture;
     LTexture lvlTextTexture;
@@ -53,11 +47,11 @@ class GameLoop : public GameState
     LTimer delayTimer;
 
     // Sound Effects
-    Mix_Chunk *alienShot = NULL;
-    Mix_Chunk *playerShot = NULL;
-    Mix_Chunk *alienHitA = NULL;
-    Mix_Chunk *alienHitB = NULL;
-    Mix_Chunk *playerHit = NULL;
+    Mix_Chunk *sfx_alienShot = NULL;
+    Mix_Chunk *sfx_playerShot = NULL;
+    Mix_Chunk *sfx_alienHitA = NULL;
+    Mix_Chunk *sfx_alienHitB = NULL;
+    Mix_Chunk *sfx_playerHit = NULL;
 
     // Game Entities
     SDL_Rect field;
@@ -108,16 +102,16 @@ class GameLoop : public GameState
         printf("Gamestate Object Deconstructing...\n");
 
         //Free the sound effects
-        Mix_FreeChunk( playerShot );
-        playerShot = NULL;
-        Mix_FreeChunk( alienShot );
-        alienShot = NULL;
-        Mix_FreeChunk( alienHitA );
-        alienHitA = NULL;
-        Mix_FreeChunk( alienHitB );
-        alienHitB = NULL;
-        Mix_FreeChunk( playerHit );
-        playerHit = NULL;
+        Mix_FreeChunk( sfx_playerShot );
+        sfx_playerShot = NULL;
+        Mix_FreeChunk( sfx_alienShot );
+        sfx_alienShot = NULL;
+        Mix_FreeChunk( sfx_alienHitA );
+        sfx_alienHitA = NULL;
+        Mix_FreeChunk( sfx_alienHitB );
+        sfx_alienHitB = NULL;
+        Mix_FreeChunk( sfx_playerHit );
+        sfx_playerHit = NULL;
 
         //Free loaded image
         livesTextTexture.free();
@@ -130,9 +124,20 @@ class GameLoop : public GameState
         //Initialization goes here
         lives = DEFAULT_LIVES;
         score = 0;
-        updateLivesText();
-        updateScoreText();
+        livesTextTexture.loadFromRenderedText( updateText("Lives: ", lives), textColor);
+        scoreTextTexture.loadFromRenderedText( updateText("Score: ", score), textColor);
         goNextLevel();
+    }
+
+    // Function which streamlines the loading of sound chunks.
+    bool loadSound(Mix_Chunk **chunk, std::string path){
+        bool success = true;
+        *chunk = Mix_LoadWAV(path.c_str());
+        if ( chunk == NULL) {
+            printf( "Failed to load %s! SDL_mixer Error: %s\n", path, Mix_GetError() );
+            success = false;
+        }
+        return success;
     }
 
     //TODO: Can we streamline the sprite sheet creation into a function?
@@ -142,79 +147,40 @@ class GameLoop : public GameState
         bool success = true;
 
         //Load sound effects
-        playerShot = Mix_LoadWAV( "../assets/sfx_player_shot.wav" );
-        if( playerShot == NULL )
-        {
-            printf( "Failed to load player shot sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        if ( !loadSound(&sfx_playerShot,"../assets/sfx_player_shot.wav" ) );
             success = false;
-        }
-
-        alienShot = Mix_LoadWAV( "../assets/sfx_alien_shot.wav" );
-        if( alienShot == NULL )
-        {
-            printf( "Failed to load alien shot sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        if ( !loadSound(&sfx_alienShot,"../assets/sfx_alien_shot.wav" ) );
             success = false;
-        }
-
-        alienHitA = Mix_LoadWAV( "../assets/sfx_alien_hitA.wav" );
-        if( alienHitA == NULL )
-        {
-            printf( "Failed to load alien hitA sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        if ( !loadSound(&sfx_alienHitA,"../assets/sfx_alien_hitA.wav" ) );
             success = false;
-        }
-
-        alienHitB = Mix_LoadWAV( "../assets/sfx_alien_hitB.wav" );
-        if( alienHitB == NULL )
-        {
-            printf( "Failed to load alien hitB sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        if ( !loadSound(&sfx_alienHitB,"../assets/sfx_alien_hitB.wav" ) );
             success = false;
-        }
-
-        playerHit = Mix_LoadWAV( "../assets/sfx_player_hit.wav" );
-        if( playerHit == NULL )
-        {
-            printf( "Failed to load player hit sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        if ( !loadSound(&sfx_playerHit,"../assets/sfx_player_hit.wav" ) );
             success = false;
-        }
 
         //Set text to be rendered
         msgText.str( " " );
         livesText.str( " " );
 
         //Render text
-        livesTextTexture.setText(livesText.str().c_str(), textColor);
+        livesTextTexture.loadFromRenderedText( updateText("Lives: ", lives), textColor);
 
-        lvlTextTexture.setText(msgText.str().c_str(), textColor);
+        lvlTextTexture.loadFromRenderedText( updateText("Mission: ", currentLev), textColor);
 
         return success;
     }
 
-    void updateLvlText(int num){
-        //Set text to be rendered
-        lvlText.str( "" );
-        lvlText << "Mission: " << num;
+    // Generic function for updating text strings with integers potentially appended at the end
+    std::string updateText(std::string text, int num = -1){
+        std::stringstream result;
 
-        //Render text
-        lvlTextTexture.setText(lvlText.str().c_str(), textColor);
+        result.str("");
+        result << text;
 
-    }
+        if (num != -1)
+            result << num;
 
-    void updateLivesText() {
-        //Set text to be rendered
-        livesText.str( "" );
-        livesText << "Lives: " << lives;
-
-        //Render text
-        livesTextTexture.setText(livesText.str().c_str(), textColor);
-    }
-
-    void updateScoreText() {
-        //Set text to be rendered
-        scoreText.str( "" );
-        scoreText << "Score: " << score;
-
-        //Render text
-        scoreTextTexture.setText(scoreText.str().c_str(), textColor);
+        return result.str();
     }
 
     void goNextLevel(){
@@ -227,7 +193,7 @@ class GameLoop : public GameState
     void initLevel() {
 
         // Update level string and display text on screen
-        updateLvlText(currentLev);
+        lvlTextTexture.loadFromRenderedText( updateText("Mission: ", currentLev), textColor);
         showLvl = true;
 
         // Set countdown to hide level text some time after level begins
