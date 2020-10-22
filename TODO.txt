@@ -3,15 +3,16 @@ Game Engine TODO:
 - Streamline LoadMedia Functions for various gamestates
 	* Centralized Class for sound/Texture files?
 	* Load assets on an entity basis?
-- Streamline "updateText" functions
-	* Is Stringstream necessary? Are there alternatives?
 - Implement levels as sub-loops
 	* Need to define loop structure
-- Add pause/menu to GameLoop
 - Improve font handling
 	*gFont may not be deallocating properly
-	
-	Test1
-	Test2
-	Test3
-	Test4
+- Re-Implement Bullet in Gameloop
+
+Elements from BrickBreak to merge:
+
+- Pickup Class
+	* Needs to be made more generic/cleaned up
+- WeightedTable Class
+- Pause Function
+- Menu Options/Configurations
