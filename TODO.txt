@@ -16,5 +16,3 @@ Elements from BrickBreak to merge:
 - WeightedTable Class
 - Pause Function
 - Menu Options/Configurations
-
-hacktoberfest_3
