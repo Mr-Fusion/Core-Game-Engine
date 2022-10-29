@@ -8,7 +8,6 @@ Game Engine TODO:
 - Improve font handling
 	*gFont may not be deallocating properly
 - Re-Implement Bullet in Gameloop
-- Look into Entity, Component, System (ECS) Structure
 
 Elements from BrickBreak to merge:
 
