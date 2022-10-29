@@ -9,7 +9,6 @@ Game Engine TODO:
 	*gFont may not be deallocating properly
 - Re-Implement Bullet in Gameloop
 - Look into Entity, Component, System (ECS) Structure
-"ECS ("Entity Component System") describes a design approach which promotes code reusability by separating data from behavior. Data is often stored in cache-friendly ways which benefits performance."
 
 Elements from BrickBreak to merge:
 
